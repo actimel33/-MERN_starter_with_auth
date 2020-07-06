@@ -19,7 +19,7 @@ router.post(
     async (req, res) => {
         try {
             const errors = validationResult(req);
-
+            console.log(req.body);
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     errors: errors.array(),
@@ -27,7 +27,7 @@ router.post(
                 });
             }
             const {email, password} = req.body;
-            const candidate = User.findOne({email});
+            const candidate = await User.findOne({email});
 
             if (candidate) {
                 return res.status(400).json({message: messages.USER_EXIST});
@@ -64,13 +64,13 @@ router.post(
             }
 
             const {email, password} = req.body;
-            const user = User.findOne({email});
+            const user = await User.findOne({email});
 
             if (!user) {
                 return res.status(400).json({message: messages.USER_NOT_EXIST});
             }
 
-            const isMatch = bCrypt.compare(password, user.password);
+            const isMatch = await bCrypt.compare(password, user.password);
 
             if (!isMatch) {
                 return res.status(400).json({message: messages.INVALID_LOGIN_OR_PASSWORD});
@@ -81,7 +81,7 @@ router.post(
                 config.get('jwtSecret'),
                 {expiresIn: '1h'});
 
-            res.status(200).json({token, userId: user.id})
+            res.status(200).json({token, userId: user.id, message: messages.LOGGED_IN})
 
         } catch (e) {
             res.status(500).json({message: messages.SERVER_ERROR});

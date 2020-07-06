@@ -4,7 +4,10 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+app.use(express.json({extended: true}));
 app.use('/auth', require('./routes/auth.routes'));
+app.use('/link', require('./routes/link.routes'));
+app.use('/t', require('./routes/redirect.routes'));
 
 const PORT = config.get('port');
 
@@ -25,5 +28,5 @@ async function start() {
 start();
 
 app.listen(PORT || 5000, () => {
-    console.log(`Server is tuning on port ${PORT}...`);
+    console.log(`Server is runing on port ${PORT}...`);
 });
